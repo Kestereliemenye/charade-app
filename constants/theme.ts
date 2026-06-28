@@ -22,6 +22,11 @@ export const colors = {
   neutral700: "#44403c",
   neutral800: "#292524",
   neutral900: "#1c1917",
+  testYellow: "#FFD700",
+  textGreen: "#39FF14",
+  label: "39FF14",
+  subText: "#F5F5DC",
+  btn: "#FFD700",
 };
 
 export const spacingX = {

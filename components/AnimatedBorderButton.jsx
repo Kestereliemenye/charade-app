@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Animated, {
   useSharedValue,
@@ -8,14 +8,15 @@ import Animated, {
   withTiming,
   Easing,
 } from "react-native-reanimated";
+import { spacingX, spacingY } from "../constants/theme";
 
-const AnimatedBorderButton = ({ children, style }) => {
+const AnimatedBorderButton = ({ children, onPress, style }) => {
   const rotation = useSharedValue(0);
 
   useEffect(() => {
     rotation.value = withRepeat(
       withTiming(360, { duration: 3000, easing: Easing.linear }),
-      -1, // Infinite
+      -1,
       false,
     );
   }, []);
@@ -25,32 +26,39 @@ const AnimatedBorderButton = ({ children, style }) => {
   }));
 
   return (
-    <View style={[styles.borderContainer, style]}>
+    <TouchableOpacity
+      onPress={onPress}
+      activeOpacity={0.9}
+      style={[styles.borderContainer, style]}
+    >
       <Animated.View style={[styles.rotatingBorder, animatedStyle]}>
         <LinearGradient
-          colors={["#FFD700", "#B8860B", "#FFD700"]} // Gold gradient
+          colors={["#FFD700", "#B8860B", "#FFD700"]}
           style={StyleSheet.absoluteFill}
         />
       </Animated.View>
       <View style={styles.contentContainer}>{children}</View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   borderContainer: {
-    borderRadius: 30,
+    borderRadius: 20,
     overflow: "hidden",
-    padding: 3, // This defines the thickness of the gold border
+    padding: 3,
   },
   rotatingBorder: {
     ...StyleSheet.absoluteFillObject,
   },
   contentContainer: {
-    backgroundColor: "#0A2508", // Matches your inner button color
-    borderRadius: 27,
-    paddingVertical: 15,
-    paddingHorizontal: 40,
+    backgroundColor: "#0A2508",
+    borderRadius: 50,
+    // paddingVertical: 15,
+    paddingVertical: spacingY._15,
+    // paddingHorizontal: 40,
+    paddingHorizontal: spacingX._40,
+    // alignItems: "center", // Ensures content stays centered
   },
 });
 

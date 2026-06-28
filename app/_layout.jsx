@@ -1,24 +1,17 @@
-import { StyleSheet } from "react-native";
 import React from "react";
 import { Stack } from "expo-router";
-// Import the fonts
 import {
   useFonts,
   Poppins_900Black,
   Poppins_700Bold,
 } from "@expo-google-fonts/poppins";
+import { AudioProvider } from "../contexts/AudioContext"; // Ensure this path is correct
 
 const StackLayout = () => {
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen
-        name="(main)/profileModal"
-        options={{ presentation: "modal" }}
-      />
-      <Stack.Screen
-        name="(main)/newConversationModal"
-        options={{ presentation: "modal" }}
-      />
+      {/* Your main tabs are handled by a separate _layout.tsx in your (main) folder */}
+      <Stack.Screen name="(tabs)" />
     </Stack>
   );
 };
@@ -35,7 +28,11 @@ const RootLayout = () => {
     return null;
   }
 
-  return <StackLayout />;
+  return (
+    <AudioProvider>
+      <StackLayout />
+    </AudioProvider>
+  );
 };
 
 export default RootLayout;

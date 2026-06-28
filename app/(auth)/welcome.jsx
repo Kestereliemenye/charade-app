@@ -18,6 +18,7 @@ import AnimatedBorderButton from "../../components/AnimatedBorderButton";
 import { verticalScale } from "../../utils/styling";
 import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
+import Button from "../../components/Button";
 
 const Welcome = () => {
     //FOR IMAGE BOUNCINGG ANIMATION
@@ -114,12 +115,25 @@ const Welcome = () => {
             Energy
           </Typo>
         </View>
-        <AnimatedBorderButton>
+        <AnimatedBorderButton
+          onPress={() => router.push("/(tabs)/home")}
+          style={{
+            shadowColor: "#000",
+            shadowOffset: { width: 4, height: 10 },
+            shadowOpacity: 0.3,
+            shadowRadius: 5,
+          }}
+        >
           <Typo
-            size={23}
-            fontWeight={"850"}
+            size={30}
+            fontWeight={"800"}
             color={colors.white}
-            style={{ textAlign: "center", fontFamily: "Poppins_900Black" }}
+            style={{
+              fontFamily: "Poppins_900Black",
+              textShadowColor: "rgba(0, 0, 0, 0.75)",
+              textShadowOffset: { width: 1, height: 2 },
+              textShadowRadius: 0.5,
+            }}
           >
             Play Now
           </Typo>
