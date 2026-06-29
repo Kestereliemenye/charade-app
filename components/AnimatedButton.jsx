@@ -4,8 +4,8 @@ import Typo from './Typo'
 import AnimatedBorderButton from './AnimatedBorderButton';
 import { colors, radius, spacingX } from '../constants/theme';
 import { router } from 'expo-router';
-import * as Icons from "phosphor-react-native";
 import { verticalScale } from '../utils/styling';
+import * as Icons from "phosphor-react-native";
 
 const AnimatedButton = ({style}) => {
   return (

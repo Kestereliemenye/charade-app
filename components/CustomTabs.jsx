@@ -1,10 +1,10 @@
 import { View, Platform, TouchableOpacity, StyleSheet } from "react-native";
 import { colors, spacingX, spacingY } from "@/constants/theme";
 import { verticalScale } from "@/utils/styling";
-import * as Icons from "phosphor-react-native";
 import { AudioContext } from "../contexts/AudioContext";
 import { playClickSound } from "../utils/soundEffect";
 import { useContext } from "react";
+import * as Icons from "phosphor-react-native";
 
 export default function CustomTabs({ state, descriptors, navigation }) {
   const tabbarIcons = {

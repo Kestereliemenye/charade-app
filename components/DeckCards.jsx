@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     height: verticalScale(130),
     backgroundColor: "#1B3022", // A deep green to match your theme
     borderRadius: 20,
-    marginRight: verticalScale(20),
+    // marginRight: verticalScale(20),
     justifyContent: "center", // Vertically center content
     alignItems: "center",     // Horizontally center content
     borderWidth: 2,
