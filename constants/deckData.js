@@ -1,7 +1,15 @@
 import * as Icons from "phosphor-react-native";
 
 export const DECK_DATA = [
-  { id: "1", title: "Nollywood", icon: Icons.FilmSlate },
+  {
+    id: "1",
+    title: "Nollywood Stars",
+    icon: Icons.FilmSlate,
+    bgImage: require("../assets/images/nollywoodBg.png"),
+    lobbyImg: require("../assets/images/nollywoodLobbyImg.png"),
+    intro:
+      "Lights, Camera, Action! Dive into the heart of African cinema with the ultimate Nollywood challenge. Think you know your movie trivia? Prove it on the screen.",
+  },
   { id: "2", title: "Afrobeats", icon: Icons.MusicNotes },
   { id: "3", title: "Lagos Life", icon: Icons.Buildings },
   { id: "4", title: "Street Food", icon: Icons.Hamburger },

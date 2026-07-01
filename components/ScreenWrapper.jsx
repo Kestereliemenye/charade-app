@@ -18,6 +18,7 @@ const ScreenWrapper = ({
   showPattern = false,
   isModal = false,
   bgOpacity = 1,
+  bgImage = require("../assets/images/splashbgscreen.png"),
 }) => {
   let paddingTop = Platform.OS === "ios" ? height * 0.06 : 40;
   let paddingBottom = 0;
@@ -32,8 +33,8 @@ const ScreenWrapper = ({
         flex: 1,
         backgroundColor: isModal ? colors.white : colors.neutral900,
       }}
-      imageStyle={{ opacity: showPattern ? bgOpacity : 0}}
-      source={require("../assets/images/splashbgscreen.png")}
+      imageStyle={{ opacity: showPattern ? bgOpacity : 0 }}
+      source={bgImage}
     >
       <View
         style={[
