@@ -5,11 +5,16 @@ import { CaretLeft } from "phosphor-react-native";
 import { verticalScale } from "@/utils/styling";
 import { colors, radius } from "@/constants/theme";
 
-export default function BackBtn({ style, iconSize = 26 }) {
+export default function BackBtn({ style, iconSize = 26 ,onPress}) {
   const router = useRouter();
   return (
     <TouchableOpacity
-      onPress={() => router.back()}
+      onPress={() => {
+        if (onPress) {
+          onPress(); // Run custom function if passed
+        }
+        router.back(); // Always go back
+      }}
       style={[styles.button, style]}
     >
       <CaretLeft

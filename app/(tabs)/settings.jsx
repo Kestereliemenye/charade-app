@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView, Platform } from "react-native";
 import Slider from "@react-native-community/slider";
 import Typo from "../../components/Typo"; // Assuming you have your custom Typo
 // import { AudioContext } from "../../contexts/AudioContext";
@@ -36,7 +36,7 @@ export default Settings;
 const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: spacingX._20,
-    paddingVertical: spacingY._20,
+    paddingVertical: Platform.OS === "ios" ? spacingY._20 : spacingY._10,
     flex: 1,
   },
   header: {

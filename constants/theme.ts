@@ -27,6 +27,8 @@ export const colors = {
   label: "39FF14",
   subText: "#F5F5DC",
   btn: "#FFD700",
+  correct: "#2ecc71",
+  skip: "#e74c3c",
 };
 
 export const spacingX = {

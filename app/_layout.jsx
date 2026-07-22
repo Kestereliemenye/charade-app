@@ -17,6 +17,8 @@ const StackLayout = () => {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="Lobby" />
+      <Stack.Screen name="GamePlay" />
+      <Stack.Screen name="ScoreScreen" options={{ gestureEnabled: false }} />
     </Stack>
   );
 };

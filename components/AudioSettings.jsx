@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Platform } from "react-native";
 import Slider from "@react-native-community/slider";
 import Typo from "./Typo"; // Assuming you have your custom Typo
 import { AudioContext } from "../contexts/AudioContext";
@@ -78,5 +78,10 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: "Poppins_900Black",
   },
-  slider: { width: "100%", height: 40 },
+  slider: {
+
+    width: "100%",
+    height: Platform.OS === "ios" ? 40 : 40
+    
+   },
 });

@@ -6,7 +6,7 @@ import {
   View,
 } from "react-native";
 import React, { useState } from "react";
-import { useLocalSearchParams } from "expo-router"; // import the hook
+import { useLocalSearchParams, useRouter } from "expo-router"; // import the hook
 import ScreenWrapper from "../components/ScreenWrapper";
 import * as Icons from "phosphor-react-native";
 import { colors, radius, spacingX, spacingY } from "../constants/theme";
@@ -22,11 +22,12 @@ const Lobby = () => {
   // Destructure the parameter you passed from the DeckCards
 
   const { deckTitle } = useLocalSearchParams();
+  const router = useRouter()
 
   // CHECK FOR DATA
   const currentDeck = DECK_DATA.find((deck) => deck.title === deckTitle);
 
-  const [time, setTime] = useState(60);
+  const [time, setTime] = useState(5);
   const [rounds, setRounds] = useState(10);
   return (
     <ScreenWrapper
@@ -34,7 +35,7 @@ const Lobby = () => {
       bgImage={currentDeck?.bgImage}
       showPattern={true}
     >
-      <BackBtn />
+      <BackBtn onPress={() => router.replace("/(tabs)/home")} />
       <Typo size={35} style={styles.header} fontWeight={"700"}>
         {deckTitle}
       </Typo>
@@ -61,8 +62,8 @@ const Lobby = () => {
           <GameSlider
             label="Duration"
             value={time}
-            min={30}
-            max={90}
+            min={5}
+            max={60}
             step={5}
             unit="s"
             onValueChange={setTime}
@@ -74,6 +75,11 @@ const Lobby = () => {
             // paddingVertical: spacingY._30,
             paddingHorizontal: spacingX._60,
           }}
+          onPress={() =>{router.replace({
+      pathname: "/GamePlay",
+      params: { duration: time, deckTitle: deckTitle , categoryTitle: deckTitle }
+    });
+  }}
         >
           <Typo
             size={25}
@@ -96,7 +102,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     // backgroundColor: "#fff", // Or your app's theme color
-    paddingVertical: spacingY._10,
+    paddingVertical: spacingY._5,
   },
   title: {
     fontSize: 24,
