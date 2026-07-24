@@ -5,17 +5,15 @@ import { StyleSheet, View } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { colors } from "../constants/theme";
 import Typo from "../components/Typo";
-import { DECK_DATA } from "../constants/deckData"; // Update with your actual relative path to DECK_DATA
+import { DECK_DATA } from "../constants/deckData";
 
 const GamePlay = () => {
   const { duration, categoryTitle, deckTitle } = useLocalSearchParams();
   const initialTime = duration ? parseInt(duration, 10) : 60;
 
-  // 1. Find the selected deck's questions, fallback to a default set if not found
   const selectedDeck = DECK_DATA.find((deck) => deck.title === categoryTitle);
   const [questions, setQuestions] = useState(() => {
     const rawQuestions = selectedDeck?.questions || ["Nollywood Word Here"];
-    // Shuffle the questions array so it's random every game
     return [...rawQuestions].sort(() => Math.random() - 0.5);
   });
 
@@ -25,9 +23,11 @@ const GamePlay = () => {
   const [isHoriz, setIsHoriz] = useState(false);
   const [bgColor, setBgColor] = useState(colors.primary);
 
+  // New state to manage the feedback modal/popup text ("CORRECT" or "WRONG")
+  const [feedbackMessage, setFeedbackMessage] = useState(null);
+
   const isProcessingRef = useRef(false);
 
-  // 2. Force Screen Orientation to Landscape on mount, reset on unmount
   useEffect(() => {
     async function lockOrientation() {
       await ScreenOrientation.lockAsync(
@@ -41,7 +41,6 @@ const GamePlay = () => {
     };
   }, []);
 
-  // 3. Check Phone Orientation using Accelerometer
   useEffect(() => {
     Accelerometer.setUpdateInterval(200);
 
@@ -53,41 +52,41 @@ const GamePlay = () => {
     return () => subscription.remove();
   }, []);
 
-  // 4. Gyroscope Sensor Effect for Tilts (Correct / Skip)
   useEffect(() => {
     const subscription = Gyroscope.addListener(({ y }) => {
       if (isProcessingRef.current || timeLeft <= 0 || !isHoriz) return;
 
-      if (y < -2) {
-        handleCorrect();
-      } else if (y > 2) {
+      if (y < -4) {
         handleSkip();
+      } else if (y > 4) {
+        handleCorrect();
       }
     });
 
     return () => subscription.remove();
   }, [timeLeft, isHoriz, currentIndex]);
 
-  // 5. Countdown Timer Effect
-  useEffect(() => {
-    if (timeLeft <= 0) {
-      router.replace({
-        pathname: "/ScoreScreen",
-        params: { finalScore: score, deckTitle: deckTitle },
-      });
-      return;
-    }
+ useEffect(() => {
+   if (timeLeft <= 0) {
+     // Add a slight 1-second delay bore movin to score screen
+     const timeout = setTimeout(() => {
+       router.replace({
+         pathname: "/ScoreScreen",
+         params: { finalScore: score, deckTitle: deckTitle },
+       });
+     }, 1000);
 
-    if (!isHoriz) return;
+     return () => clearTimeout(timeout);
+   }
 
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => prev - 1);
-    }, 1000);
+   if (!isHoriz) return;
 
-    return () => clearInterval(timer);
-  }, [isHoriz, timeLeft, score]);
+   const timer = setInterval(() => {
+     setTimeLeft((prev) => prev - 1);
+   }, 1000);
 
-  // Helper to move to the next word (loops back if questions run out)
+   return () => clearInterval(timer);
+ }, [isHoriz, timeLeft, score, deckTitle]);
   const nextWord = () => {
     setCurrentIndex((prev) => (prev + 1) % questions.length);
   };
@@ -95,22 +94,26 @@ const GamePlay = () => {
   const handleCorrect = () => {
     isProcessingRef.current = true;
     setScore((prev) => prev + 1);
-    setBgColor(colors.correct); 
+    setBgColor(colors.correct || "#2ecc71");
+    setFeedbackMessage("CORRECT! 🎉"); // Trigger popup
     nextWord();
 
     setTimeout(() => {
       setBgColor(colors.primary);
+      setFeedbackMessage(null); // Clear popup after 1 second
       isProcessingRef.current = false;
     }, 1000);
   };
 
   const handleSkip = () => {
     isProcessingRef.current = true;
-    setBgColor(colors.skip); 
+    setBgColor(colors.skip || "#e74c3c");
+    setFeedbackMessage("WRONG! ❌"); // Trigger popup
     nextWord();
 
     setTimeout(() => {
       setBgColor(colors.primary);
+      setFeedbackMessage(null); // Clear popup after 1 second
       isProcessingRef.current = false;
     }, 1000);
   };
@@ -129,6 +132,18 @@ const GamePlay = () => {
             round.
           </Typo>
         </View>
+      ) : feedbackMessage ? (
+        // Popup Modal overlay for 1 second during correct/skip transition
+        <View style={styles.popupContainer}>
+          <Typo
+            size={55}
+            color={colors.white}
+            fontWeight="900"
+            style={{ textAlign: "center" }}
+          >
+            {feedbackMessage}
+          </Typo>
+        </View>
       ) : (
         <>
           <View style={styles.timerContainer}>
@@ -138,7 +153,6 @@ const GamePlay = () => {
           </View>
 
           <View style={styles.wordContainer}>
-            {/* Displays the current category question dynamically */}
             <Typo
               size={42}
               color={colors.white}
@@ -172,6 +186,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 30,
+  },
+  popupContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
   },
   timerContainer: {
     position: "absolute",

@@ -19,16 +19,33 @@ import GameSlider from "../components/GameSlider";
 import { Image } from "expo-image";
 
 const Lobby = () => {
-  // Destructure the parameter you passed from the DeckCards
-
   const { deckTitle } = useLocalSearchParams();
-  const router = useRouter()
+  const router = useRouter();
 
   // CHECK FOR DATA
   const currentDeck = DECK_DATA.find((deck) => deck.title === deckTitle);
 
-  const [time, setTime] = useState(5);
+  const [time, setTime] = useState(30);
   const [rounds, setRounds] = useState(10);
+  const [isStarting, setIsStarting] = useState(false); //  start delay state
+
+  const handleStartGame = () => {
+    if (isStarting) return; // Prevent multiple clicks
+    setIsStarting(true);
+
+    // 1-second delay before pushing to GamePlay
+    setTimeout(() => {
+      router.replace({
+        pathname: "/GamePlay",
+        params: {
+          duration: time,
+          deckTitle: deckTitle,
+          categoryTitle: deckTitle,
+        },
+      });
+    }, 1000);
+  };
+
   return (
     <ScreenWrapper
       style={{ flex: 1 }}
@@ -44,8 +61,8 @@ const Lobby = () => {
           <Image
             source={currentDeck?.lobbyImg}
             style={styles.lobbyImage}
-            contentFit="cover" // equivalent to resizeMode="cover"
-            transition={500} // Beautiful cross-fade transition
+            contentFit="cover"
+            transition={500}
           />
           <Typo
             size={13}
@@ -72,21 +89,17 @@ const Lobby = () => {
         </View>
         <Button
           style={{
-            // paddingVertical: spacingY._30,
             paddingHorizontal: spacingX._60,
           }}
-          onPress={() =>{router.replace({
-      pathname: "/GamePlay",
-      params: { duration: time, deckTitle: deckTitle , categoryTitle: deckTitle }
-    });
-  }}
+          onPress={handleStartGame}
+          disabled={isStarting} // Disable button while starting
         >
           <Typo
             size={25}
             color={colors.white}
             style={{ fontFamily: "Poppins_900Black" }}
           >
-            Start Game
+            {isStarting ? "Get Ready! 🎬" : "Start Game"}
           </Typo>
         </Button>
       </View>
@@ -101,7 +114,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-around",
     alignItems: "center",
-    // backgroundColor: "#fff", // Or your app's theme color
     paddingVertical: spacingY._5,
   },
   title: {
@@ -120,7 +132,6 @@ const styles = StyleSheet.create({
   },
   body: {
     backgroundColor: colors.white,
-    // flex: 1,
     flexDirection: "column",
     overflow: "hidden",
     justifyContent: "space-between",
@@ -130,10 +141,9 @@ const styles = StyleSheet.create({
   },
   lobbyImage: {
     width: "100%",
-    height: verticalScale(250), // Give it a fixed height or flex
+    height: verticalScale(250),
   },
   sliderContainer: {
     paddingHorizontal: 20,
-    // marginTop: verticalScale(50),
   },
 });
