@@ -1,24 +1,27 @@
-import {
-  ImageBackground,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import React, { useState } from "react";
-import { useLocalSearchParams, useRouter } from "expo-router"; // import the hook
+import { StyleSheet, View } from "react-native";
+
+import { useCallback, useState } from "react";
+import * as ScreenOrientation from "expo-screen-orientation";
+import { useLocalSearchParams, useRouter, useFocusEffect } from "expo-router"; // import the hook
 import ScreenWrapper from "../components/ScreenWrapper";
-import * as Icons from "phosphor-react-native";
 import { colors, radius, spacingX, spacingY } from "../constants/theme";
 import BackBtn from "../components/BackBtn";
 import { DECK_DATA } from "../constants/deckData";
 import Typo from "../components/Typo";
 import { verticalScale } from "../utils/styling";
 import Button from "../components/Button";
-import GameSlider from "../components/GameSlider";
+import GameTimer from "../components/GameSlider";
 import { Image } from "expo-image";
+import { saveRecentDeck } from "../utils/recentDecks";
 
 const Lobby = () => {
+  useFocusEffect(
+    useCallback(() => {
+      ScreenOrientation.lockAsync(
+        ScreenOrientation.OrientationLock.PORTRAIT_UP,
+      );
+    }, []),
+  );
   const { deckTitle } = useLocalSearchParams();
   const router = useRouter();
 
@@ -26,13 +29,14 @@ const Lobby = () => {
   const currentDeck = DECK_DATA.find((deck) => deck.title === deckTitle);
 
   const [time, setTime] = useState(30);
-  const [rounds, setRounds] = useState(10);
   const [isStarting, setIsStarting] = useState(false); //  start delay state
 
-  const handleStartGame = () => {
+  const handleStartGame = async () => {
     if (isStarting) return; // Prevent multiple clicks
     setIsStarting(true);
 
+    // Record it as recently played
+    await saveRecentDeck(currentDeck.id);
     // 1-second delay before pushing to GamePlay
     setTimeout(() => {
       router.replace({
@@ -43,14 +47,32 @@ const Lobby = () => {
           categoryTitle: deckTitle,
         },
       });
-    }, 1000);
+    }, 3000);
   };
+
+  if (!currentDeck) {
+    return (
+      <ScreenWrapper showPattern>
+        <View style={styles.errorContainer}>
+          <Typo size={20} color={colors.white}>
+            Deck not found
+          </Typo>
+
+          <Button onPress={() => router.replace("/(tabs)/decks")}>
+            <Typo color={colors.white}>Back to Decks</Typo>
+          </Button>
+        </View>
+      </ScreenWrapper>
+    );
+  }
 
   return (
     <ScreenWrapper
       style={{ flex: 1, paddingVertical: spacingY._30 }}
-      bgImage={currentDeck?.bgImage}
       showPattern={true}
+      overlayColor={colors.spalshBg_light}
+      showOverlay
+      overlayOpacity={0.8}
     >
       <View style={styles.topBtn}>
         <BackBtn onPress={() => router.replace("/(tabs)/home")} />
@@ -61,9 +83,9 @@ const Lobby = () => {
       <View style={styles.container}>
         <View style={styles.body}>
           <Image
-            source={currentDeck?.lobbyImg}
+            source={currentDeck?.lobbyImage}
             style={styles.lobbyImage}
-            contentFit="cover"
+            contentFit="contain"
             transition={500}
           />
           <Typo
@@ -78,16 +100,24 @@ const Lobby = () => {
           >
             {currentDeck?.intro}
           </Typo>
-          <GameSlider
-            label="Duration"
-            value={time}
-            min={5}
-            max={60}
-            step={5}
-            unit="s"
-            onValueChange={setTime}
-            style={styles.sliderContainer}
-          />
+          <View style={styles.timerSection}>
+            <Typo
+              size={16}
+              color={colors.black}
+              fontWeight="700"
+              style={styles.timerLabel}
+            >
+              Round Duration
+            </Typo>
+
+            <GameTimer
+              value={time}
+              min={5}
+              max={120}
+              step={5}
+              onValueChange={setTime}
+            />
+          </View>
         </View>
         <Button
           style={{
@@ -150,5 +180,21 @@ const styles = StyleSheet.create({
   },
   sliderContainer: {
     paddingHorizontal: 20,
+  },
+  errorContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 20,
+  },
+  timerSection: {
+    width: "100%",
+    marginTop: verticalScale(5),
+    marginBottom: verticalScale(20),
+  },
+
+  timerLabel: {
+    marginBottom: verticalScale(15),
+    textAlign: "center",
   },
 });

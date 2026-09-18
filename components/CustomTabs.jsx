@@ -1,53 +1,71 @@
-import { View, Platform, TouchableOpacity, StyleSheet } from "react-native";
-import { colors, spacingX, spacingY } from "@/constants/theme";
-import { verticalScale } from "@/utils/styling";
-import { AudioContext } from "../contexts/AudioContext";
-import { playClickSound } from "../utils/soundEffect";
+import {
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import Animated, {
+  FadeInRight,
+  FadeOutLeft,
+  LinearTransition,
+  ZoomIn,
+} from "react-native-reanimated";
 import { useContext } from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Icons from "phosphor-react-native";
 
+import { colors } from "@/constants/theme";
+import { AudioContext } from "../contexts/AudioContext";
+import { playClickSound } from "../utils/soundEffect";
+
 export default function CustomTabs({ state, descriptors, navigation }) {
-  const tabbarIcons = {
-    home: (isFocused) => (
-      <Icons.House
-        size={verticalScale(30)}
-        weight={isFocused ? "fill" : "regular"}
-        color={isFocused ? colors.primary : colors.neutral400}
-      />
-    ),
-    settings: (isFocused) => (
-      <Icons.GearIcon
-        size={verticalScale(30)}
-        weight={isFocused ? "fill" : "regular"}
-        color={isFocused ? colors.primary : colors.neutral400}
-      />
-    ),
-    decks: (isFocused) => (
-      <Icons.CardsIcon
-        size={verticalScale(30)}
-        weight={isFocused ? "fill" : "regular"}
-        color={isFocused ? colors.primary : colors.neutral400}
-      />
-    ),
-  };
-  // TO GETT SOUND
+  const AnimatedTouchableOpacity =
+    Animated.createAnimatedComponent(TouchableOpacity);
+  const insets = useSafeAreaInsets();
   const { effectVolume } = useContext(AudioContext);
+
+  const tabbarItems = {
+    home: {
+      label: "Home",
+      icon: Icons.House,
+    },
+
+    decks: {
+      label: "Decks",
+      icon: Icons.Cards,
+    },
+
+    settings: {
+      label: "Settings",
+      icon: Icons.Gear,
+    },
+  };
+
   return (
-    <View style={styles.tabar}>
+    <View
+      style={[
+        styles.tabBar,
+        {
+          bottom: Math.max(insets.bottom, 12),
+        },
+      ]}
+    >
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
-        const label =
-          options.tabBarLabel !== undefined
-            ? options.tabBarLabel
-            : options.title !== undefined
-              ? options.title
-              : route.name;
-
         const isFocused = state.index === index;
 
+        const tabItem = tabbarItems[route.name];
+
+        if (!tabItem) {
+          return null;
+        }
+
+        const IconComponent = tabItem.icon;
+
         const onPress = () => {
-          //PLAY the click SOUnD
-          playClickSound(effectVolume)
+          playClickSound(effectVolume);
+
           const event = navigation.emit({
             type: "tabPress",
             target: route.key,
@@ -67,20 +85,39 @@ export default function CustomTabs({ state, descriptors, navigation }) {
         };
 
         return (
-          <TouchableOpacity
-            // href={buildHref(route.name, route.params)}
+          <AnimatedTouchableOpacity
             key={route.key}
+            accessibilityRole="button"
             accessibilityState={isFocused ? { selected: true } : {}}
             accessibilityLabel={options.tabBarAccessibilityLabel}
             testID={options.tabBarButtonTestID}
+            activeOpacity={0.8}
             onPress={onPress}
             onLongPress={onLongPress}
-            style={styles.tabBarItem}
+            layout={LinearTransition.springify().damping(18).stiffness(180)}
+            style={[styles.tabItem, isFocused && styles.activeTabItem]}
           >
-            {tabbarIcons[route.name]
-              ? tabbarIcons[route.name](isFocused)
-              : null}
-          </TouchableOpacity>
+            <Animated.View
+              key={`${route.key}-${isFocused}`}
+              entering={ZoomIn.duration(180)}
+            >
+              <IconComponent
+                size={isFocused ? 25 : 27}
+                weight={isFocused ? "fill" : "regular"}
+                color={isFocused ? "#063D24" : "rgba(255,255,255,0.65)"}
+              />
+            </Animated.View>
+
+            {isFocused && (
+              <Animated.Text
+                entering={FadeInRight.duration(220)}
+                exiting={FadeOutLeft.duration(150)}
+                style={styles.activeLabel}
+              >
+                {tabItem.label}
+              </Animated.Text>
+            )}
+          </AnimatedTouchableOpacity>
         );
       })}
     </View>
@@ -88,18 +125,50 @@ export default function CustomTabs({ state, descriptors, navigation }) {
 }
 
 const styles = StyleSheet.create({
-  tabar: {
+  tabBar: {
+    position: "absolute",
+    left: 18,
+    right: 18,
+    height: 72,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.12)",
+    borderRadius: 28,
     flexDirection: "row",
-    width: "100%",
-    height: Platform.OS === "ios" ? verticalScale(80) : verticalScale(80),
-    backgroundColor: "#050D04",
+    alignItems: "center",
     justifyContent: "space-around",
-    alignItems: "center",
-    borderTopColor: colors.neutral700,
+    backgroundColor: "#061D13",
+
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 7,
+    },
+    shadowOpacity: 0.35,
+    shadowRadius: 10,
+
+    elevation: 15,
   },
-  tabBarItem: {
-    marginBottom: Platform.OS === "ios" ? spacingY._20 : spacingY._20,
-    justifyContent: "center",
+
+  tabItem: {
+    minWidth: 58,
+    height: 50,
+    paddingHorizontal: 15,
+    borderRadius: 20,
+    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
+  },
+
+  activeTabItem: {
+    minWidth: 110,
+    gap: 8,
+    backgroundColor: "#FFBE0B",
+  },
+
+  activeLabel: {
+    color: "#063D24",
+    fontSize: 14,
+    fontFamily: "Poppins_700Bold",
   },
 });

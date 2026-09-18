@@ -1,40 +1,106 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import { Pressable, StyleSheet, View } from "react-native";
+import * as ScreenOrientation from "expo-screen-orientation";
+import { useCallback } from "react";
+import { useFocusEffect } from "expo-router";
+
 import ScreenWrapper from "../../components/ScreenWrapper";
 import Typo from "../../components/Typo";
-import { colors, radius, spacingX, spacingY } from "../../constants/theme";
-import { verticalScale } from "../../utils/styling";
 import MainDeck from "../../components/MainDeck";
 
-const decks = () => {
+import { colors, spacingX, spacingY } from "../../constants/theme";
+
+const Decks = () => {
+  useFocusEffect(
+    useCallback(() => {
+      ScreenOrientation.lockAsync(
+        ScreenOrientation.OrientationLock.PORTRAIT_UP,
+      );
+    }, []),
+  );
+
   return (
     <ScreenWrapper
-      showPattern={true}
+      showPattern
       bgOpacity={0.3}
-      style={{
-        paddingHorizontal: spacingX._20,
-        paddingVertical: spacingY._70,
-        // marginBottom: verticalScale(15),
-      }}
+      showOverlay
+      overlayColor="#006B3C"
+      overlayOpacity={0.7}
+      style={styles.screen}
     >
-      <Typo size={35} style={styles.header} fontWeight={"700"}>
-        DECKS
-      </Typo>
+      <View style={styles.headerContainer}>
+        <Pressable style={styles.headerIcon}>
+          <Typo size={25} color={colors.white}>
+            ⚙
+          </Typo>
+        </Pressable>
+
+        <Typo
+          size={30}
+          color={colors.white}
+          fontWeight="900"
+          style={styles.header}
+        >
+          Decks
+        </Typo>
+
+        <Pressable style={styles.headerIcon}>
+          <Typo size={23} color={colors.white}>
+            ⓘ
+          </Typo>
+        </Pressable>
+      </View>
+
       <MainDeck />
     </ScreenWrapper>
   );
 };
 
-export default decks;
+export default Decks;
 
 const styles = StyleSheet.create({
+  screen: {
+    paddingVertical: spacingY._25,
+    paddingHorizontal: spacingX._15
+  },
+
+  headerContainer: {
+    paddingHorizontal: 5,
+    marginBottom: 18,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+
   header: {
-     color: colors.white,
-     textAlign: "center",
-     marginTop: verticalScale(20),
-     fontFamily: "Poppins_900Black",
-     textShadowColor: "rgba(0, 0, 0, 0.75)",
-     textShadowOffset: { width: 5, height: 5 },
-     textShadowRadius: 0.5,
+    textAlign: "center",
+    fontFamily: "Poppins_900Black",
+    textShadowColor: "rgba(0,0,0,0.4)",
+    textShadowOffset: {
+      width: 2,
+      height: 2,
+    },
+    textShadowRadius: 1,
+  },
+
+  headerIcon: {
+    width: 42,
+    height: 42,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  deckImage: {
+    width: "100%",
+    height: 115,
+  },
+
+  recentImage: {
+    width: 115,
+    height: 100,
+  },
+
+  deckTitle: {
+    marginBottom: 6,
+    textAlign: "center",
   },
 });

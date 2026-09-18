@@ -7,6 +7,11 @@ import {
   Poppins_900Black,
   Poppins_700Bold,
 } from "@expo-google-fonts/poppins";
+import {
+  Montserrat_400Regular,
+  Montserrat_600SemiBold,
+  Montserrat_700Bold,
+} from "@expo-google-fonts/montserrat";
 import { AudioProvider } from "../contexts/AudioContext";
 
 // Keep the native splash screen visible while assets load
@@ -17,8 +22,26 @@ const StackLayout = () => {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="Lobby" />
-      <Stack.Screen name="GamePlay" />
-      <Stack.Screen name="ScoreScreen" options={{ gestureEnabled: false }} />
+
+      <Stack.Screen
+        name="Tutorial"
+        options={{
+          gestureEnabled: false,
+          animation: "slide_from_right",
+        }}
+      />
+      <Stack.Screen
+        name="GamePlay"
+        options={{
+          animation: "none",
+          gestureEnabled: false,
+        }}
+      />
+      <Stack.Screen
+        name="ScoreScreen"
+        options={{ animation: "none", gestureEnabled: false }}
+      />
+      <Stack.Screen name="SplashScreen" />
     </Stack>
   );
 };
@@ -30,6 +53,9 @@ const RootLayout = () => {
   let [fontsLoaded] = useFonts({
     Poppins_900Black,
     Poppins_700Bold,
+    Montserrat_400Regular,
+    Montserrat_600SemiBold,
+    Montserrat_700Bold,
   });
 
   // Load images and hide splash screen
@@ -37,8 +63,9 @@ const RootLayout = () => {
     async function prepare() {
       try {
         const images = [
-          require("../assets/images/welcomeImg.png"),
+          require("../assets/images/splash-img.png"),
           require("../assets/images/splashbgscreen.png"),
+          require("../assets/images/screenWrapper-img.png"),
           // Add your background images here
           require("../assets/images/nollywoodBg.png"),
           require("../assets/images/nollywoodLobbyImg.png"),

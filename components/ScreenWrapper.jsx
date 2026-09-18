@@ -4,22 +4,26 @@ import {
   Platform,
   StatusBar,
   StyleSheet,
-  Text,
   View,
+  useWindowDimensions,
 } from "react-native";
-import React from "react";
 import { colors } from "@/constants/theme";
 
-const { height } = Dimensions.get("window");
 
 const ScreenWrapper = ({
   style,
   children,
   showPattern = false,
+  showOverlay = false,
+  overlayColor = colors.neutral900,
+  overlayOpacity = 0.6,
   isModal = false,
   bgOpacity = 1,
-  bgImage = require("../assets/images/splashbgscreen.png"),
+  bgImage = require("../assets/images/screenWrapper-img.png"),
 }) => {
+
+    const { height } = useWindowDimensions();
+
   let paddingTop = Platform.OS === "ios" ? height * 0.06 : 40;
   let paddingBottom = 0;
 
@@ -27,26 +31,49 @@ const ScreenWrapper = ({
     paddingTop = Platform.OS === "ios" ? height * 0.02 : 45;
     paddingBottom = height * 0.02;
   }
+
   return (
     <ImageBackground
-      style={{
-        flex: 1,
-        backgroundColor: isModal ? colors.white : colors.neutral900,
+      style={[
+        styles.background,
+        {
+          backgroundColor: isModal ? colors.white : colors.spalshBg,
+        },
+      ]}
+      imageStyle={{
+        opacity: showPattern ? bgOpacity : 0,
       }}
-      imageStyle={{ opacity: showPattern ? bgOpacity : 0 }}
       source={bgImage}
     >
+      {showOverlay && (
+        <View
+          pointerEvents="none"
+          style={[
+            StyleSheet.absoluteFill,
+            {
+              backgroundColor: overlayColor,
+              opacity: overlayOpacity,
+            },
+          ]}
+        />
+      )}
+
       <View
         style={[
+          styles.content,
           {
             paddingTop,
             paddingBottom,
-            flex: 1,
           },
           style,
         ]}
       >
-        <StatusBar barStyle={"light-content"} backgroundColor={"transparent"} />
+        <StatusBar
+          barStyle="light-content"
+          backgroundColor="transparent"
+          translucent
+        />
+
         {children}
       </View>
     </ImageBackground>
@@ -55,4 +82,12 @@ const ScreenWrapper = ({
 
 export default ScreenWrapper;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+  },
+
+  content: {
+    flex: 1,
+  },
+});

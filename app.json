@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "my-naija-charadesII",
-    "slug": "my-naija-charadesII",
+    "name": "Naija charades",
+    "slug": "Naija-charades",
     "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "orientation": "default",
+    "icon": "./assets/images/splash-img.png",
     "scheme": "mynaijacharadesii",
     "userInterfaceStyle": "automatic",
     "ios": {

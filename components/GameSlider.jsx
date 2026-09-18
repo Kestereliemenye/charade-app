@@ -1,92 +1,134 @@
-import React from "react";
-import { View, StyleSheet } from "react-native";
-import Slider from "@react-native-community/slider";
+import { Pressable, StyleSheet, View } from "react-native";
 import Typo from "./Typo";
-import { colors } from "@/constants/theme";
+import { colors } from "../constants/theme";
 
-const GameSlider = ({
-  label,
+const GameTimer = ({
   value,
-  min,
-  max,
-  step,
   onValueChange,
-    unit = "",
-  style
+  min = 5,
+  max = 60,
+  step = 5,
+  style,
 }) => {
+  const decreaseTime = () => {
+    onValueChange(Math.max(min, value - step));
+  };
+
+  const increaseTime = () => {
+    onValueChange(Math.min(max, value + step));
+  };
+
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+
+    return `${String(minutes).padStart(2, "0")}:${String(
+      remainingSeconds,
+    ).padStart(2, "0")}`;
+  };
+
+  const atMinimum = value <= min;
+  const atMaximum = value >= max;
+
   return (
     <View style={[styles.container, style]}>
-      <View style={styles.header}>
-        <Typo
-          size={16}
-          color={colors.black}
-          style={[styles.label, { fontFamily: "Poppins_900Black" }]}
-        >
-          {label}
+      <Pressable
+        onPress={decreaseTime}
+        disabled={atMinimum}
+        style={({ pressed }) => [
+          styles.controlButton,
+          pressed && styles.pressedButton,
+          atMinimum && styles.disabledButton,
+        ]}
+      >
+        <Typo size={28} color={colors.white} fontWeight="900">
+          −
         </Typo>
-        <View style={styles.valueContainer}>
-          <Typo
-            size={18}
-            color={colors.gold}
-            style={[styles.valueText, { fontFamily: "Poppins_900Black" }]}
-          >
-            {value}
-            {unit}
-          </Typo>
-        </View>
+      </Pressable>
+
+      <View style={styles.timeContainer}>
+        <Typo
+          size={27}
+          color={colors.white}
+          fontWeight="900"
+          style={styles.time}
+        >
+          {formatTime(value)}
+        </Typo>
       </View>
 
-      <View style={styles.sliderWrapper}>
-        <Slider
-          style={styles.slider}
-          minimumValue={min}
-          maximumValue={max}
-          step={step}
-          value={value}
-          onValueChange={onValueChange}
-          // The "filled" part of the track
-          minimumTrackTintColor={"#FFD700"}
-          // The "empty" part of the track
-          maximumTrackTintColor="rgba(255,255,255,0.2)"
-          // The circular knob
-          thumbTintColor={colors.white}
-        />
-      </View>
+      <Pressable
+        onPress={increaseTime}
+        disabled={atMaximum}
+        style={({ pressed }) => [
+          styles.controlButton,
+          pressed && styles.pressedButton,
+          atMaximum && styles.disabledButton,
+        ]}
+      >
+        <Typo size={28} color={colors.white} fontWeight="900">
+          +
+        </Typo>
+      </Pressable>
     </View>
   );
 };
 
-export default GameSlider;
+export default GameTimer;
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 15,
-    paddingHorizontal: 10,
-    width: "100%",
-  },
-  header: {
+    width: "90%",
+    height: 62,
+    paddingHorizontal: 7,
+    borderWidth: 3,
+    borderColor: colors.white,
+    borderRadius: 17,
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 8,
+    justifyContent: "space-between",
+    alignSelf: "center",
+    backgroundColor: "#006B3C",
   },
-  valueContainer: {
-    backgroundColor: colors.green, // Deep green background for value
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 15,
-    borderWidth: 1,
-    borderColor: "#FFD700",
-  },
-  sliderWrapper: {
-    height: 40,
+
+  controlButton: {
+    width: 54,
+    height: 42,
+    borderWidth: 2,
+    borderColor: colors.white,
+    borderRadius: 12,
+    alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(0,0,0,0.2)", // Very subtle track background
-    borderRadius: 20,
-    paddingHorizontal: 5,
+    backgroundColor: "#00965E",
+
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3,
+
+    elevation: 4,
   },
-  slider: {
-    width: "100%",
-    height: 40,
+
+  pressedButton: {
+    opacity: 0.75,
+    transform: [{ scale: 0.94 }],
+  },
+
+  disabledButton: {
+    opacity: 0.35,
+  },
+
+  timeContainer: {
+    minWidth: 100,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  time: {
+    textAlign: "center",
+    fontFamily: "Poppins_900Black",
   },
 });

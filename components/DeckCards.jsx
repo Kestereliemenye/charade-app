@@ -1,30 +1,30 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { Image } from "expo-image";
 import { router } from "expo-router";
-import { verticalScale } from "../utils/styling";
-import Typo from "./Typo";
-import { colors } from "../constants/theme";
 
-const DeckCards = ({ style, icon: IconComponent, title }) => {
+import Typo from "./Typo";
+import { colors, radius, spacingX } from "../constants/theme";
+import { verticalScale } from "../utils/styling";
+
+const DeckCards = ({ id, style, image, title }) => {
   const handlePress = () => {
-    // Navigate to the 'Lobby' route and pass the title as a parameter
     router.push({
       pathname: "/Lobby",
       params: { deckTitle: title },
     });
   };
+
   return (
-    <TouchableOpacity onPress={handlePress}>
+    <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
       <View style={[styles.deck, style]}>
-        {/* Render the icon component passed as a prop */}
-        {IconComponent && (
-          <IconComponent
-            size={verticalScale(40)}
-            color={"white"}
-            weight="fill"
-          />
-        )}
-        <Typo size={20} style={{ textAlign: "center" }} color={colors.white}>
+        <Image source={image} style={styles.deckImage} contentFit="contain" />
+
+        <Typo
+          size={17}
+          color={colors.white}
+          fontWeight="700"
+          style={styles.title}
+        >
           {title}
         </Typo>
       </View>
@@ -35,18 +35,45 @@ const DeckCards = ({ style, icon: IconComponent, title }) => {
 export default DeckCards;
 
 const styles = StyleSheet.create({
-  deck: {
-    width: verticalScale(130),
-    height: verticalScale(130),
-    backgroundColor: "#1B3022", // A deep green to match your theme
-    borderRadius: 20,
-    // marginRight: verticalScale(20),
-    justifyContent: "center", // Vertically center content
-    alignItems: "center",
-    // Horizontally center content
+  touchable: {
+    width: "100%",
+  },
 
-    borderWidth: 2,
-    borderColor: "#FFD700",   // Gold border from your suggested palette
+  deck: {
+    width: "100%",
+    height: verticalScale(150),
+    paddingHorizontal: spacingX._10,
+    // paddingTop: 8,
+    // paddingBottom: 10,
+    borderWidth: verticalScale(2),
+    borderColor: "#FFBE0B",
+    borderRadius: radius._15,
+    overflow: "hidden",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 145, 80, 0.88)",
+  },
+
+  imageContainer: {
+    flex: 1,
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  deckImage: {
+    width: "100%",
+    height: "100%",
+  },
+
+  titleContainer: {
+    minHeight: 40,
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  title: {
+    textAlign: "center",
+    lineHeight: 20,
   },
 });
-

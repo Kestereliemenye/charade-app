@@ -1,28 +1,54 @@
-import { StatusBar, StyleSheet, Text, View } from "react-native";
-import Animated, { FadeInDown } from "react-native-reanimated";
+import { StatusBar, StyleSheet, View } from "react-native";
+import Animated, {
+  FadeInDown,
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withTiming,
+} from "react-native-reanimated";
 import { colors } from "@/constants/theme";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useRouter } from "expo-router";
 
 const SplashScreen = () => {
   const router = useRouter();
+  
+  const scale = useSharedValue(1);
+
+  const animatedImageStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.get() }],
+  }));
+
   useEffect(() => {
-    setTimeout(() => {
-      router.replace("/(tabs)/home");
+    scale.set(
+      withDelay(
+        700,
+        withTiming(2.5, {
+          duration: 700,
+          easing: Easing.out(Easing.ease),
+        }),
+      ),
+    );
+
+    const redirectTimer = setTimeout(() => {
+      router.replace("/SplashScreen");
     }, 1500);
-  },[]);
+
+    return () => clearTimeout(redirectTimer);
+  }, [router, scale]);
+
   return (
     <View style={styles.container}>
-      <StatusBar
-        barStyle={"light-content"}
-        backgroundColor={colors.neutral900}
-      />
-      <Animated.Image
-        source={require("../assets/images/welcomeImg.png")}
-        entering={FadeInDown.duration(700).springify()}
-        style={styles.logo}
-        resizeMode={"contain"}
-      />
+      <StatusBar barStyle="light-content" backgroundColor={colors.neutral900} />
+
+      <Animated.View entering={FadeInDown.duration(700).springify()}>
+        <Animated.Image
+          source={require("../assets/images/splash-img.png")}
+          style={[styles.logo, animatedImageStyle]}
+          resizeMode="contain"
+        />
+      </Animated.View>
     </View>
   );
 };
@@ -34,10 +60,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: colors.neutral900,
+    backgroundColor: colors.spalshBg,
   },
+
   logo: {
-    height: "23%",
-    aspectRatio: "1",
+    height: 180,
+    width: 180,
   },
 });

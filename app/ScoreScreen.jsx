@@ -1,101 +1,129 @@
 import * as ScreenOrientation from "expo-screen-orientation";
-import { useEffect } from "react";
+import { useCallback, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { useLocalSearchParams, router } from "expo-router";
-import { colors } from "../constants/theme";
-import Typo from "../components/Typo";
-import Button from "../components/Button"; // Assuming you have a reusable Button component
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
+import { Image } from "expo-image";
+
 import ScreenWrapper from "../components/ScreenWrapper";
+import Typo from "../components/Typo";
+import Button from "../components/Button";
+import { colors } from "../constants/theme";
+import { DECK_DATA } from "../constants/deckData";
 
 const ScoreScreen = () => {
-  const { finalScore, deckTitle } = useLocalSearchParams();
+  const { finalScore, deckTitle, results } = useLocalSearchParams();
+    const [orientationReady, setOrientationReady] = useState(false);
 
-  // lock screen to potrait
-useEffect(() => {
-  const lockToPortrait = async () => {
-    await ScreenOrientation.lockAsync(
-      ScreenOrientation.OrientationLock.PORTRAIT_UP,
-    );
+  const normalizedDeckTitle = Array.isArray(deckTitle)
+    ? deckTitle[0]
+    : deckTitle;
+
+  const normalizedResults = Array.isArray(results) ? results[0] : results;
+
+  const currentDeck = DECK_DATA.find(
+    (deck) => deck.title === normalizedDeckTitle,
+  );
+
+useFocusEffect(
+  useCallback(() => {
+    let screenIsActive = true;
+
+    const lockToPortrait = async () => {
+      try {
+        setOrientationReady(false);
+
+        await ScreenOrientation.lockAsync(
+          ScreenOrientation.OrientationLock.PORTRAIT_UP,
+        );
+
+        if (screenIsActive) {
+          setOrientationReady(true);
+        }
+      } catch (error) {
+        console.error("Could not lock score screen to portrait:", error);
+
+        // Still render the screen if orientation locking fails.
+        if (screenIsActive) {
+          setOrientationReady(true);
+        }
+      }
+    };
+
+    lockToPortrait();
+
+    return () => {
+      screenIsActive = false;
+    };
+  }, []),
+);
+
+  const continueToReview = () => {
+    router.replace({
+      pathname: "/ReviewAnswers",
+      params: {
+        deckTitle: normalizedDeckTitle,
+        finalScore: String(finalScore || 0),
+        results: normalizedResults || "[]",
+      },
+    });
   };
 
-  lockToPortrait();
-}, []);
   return (
     <ScreenWrapper
-      style={{ flex: 1, backgroundColor: colors.primary }}
-      showPattern={true}
+      showPattern
+      showOverlay
+      overlayColor="#008C51"
+      overlayOpacity={0.9}
     >
       <View style={styles.container}>
-        <Typo
-          size={35}
-          color={colors.white}
-          fontWeight="900"
-          style={{ textAlign: "center" }}
-        >
-          Time`s Up! 🎬
+        <Typo size={28} color={colors.white} fontWeight="900">
+          Your Score!
         </Typo>
 
-        <View style={styles.scoreCard}>
-          <Typo size={18} color={colors.white}>
-            Your Total Score
-          </Typo>
-          <Typo
-            size={60}
-            color={colors.gold}
-            fontWeight="900"
-            style={{ marginVertical: 10 }}
-          >
-            {finalScore || 0}
-          </Typo>
-        </View>
+        <Image
+          source={currentDeck?.scoreImage || currentDeck?.image}
+          style={styles.celebrationImage}
+          contentFit="contain"
+          transition={300}
+        />
 
-        <View style={styles.buttonContainer}>
-          {/* to home screen */}
-          <Button
-            onPress={() =>
-              router.replace({
-                pathname: "/Lobby",
-                params: { deckTitle: deckTitle },
-              })
-            }
-            style={[styles.button, { backgroundColor: colors.neutral700 }]}
-          >
-            <Typo size={18} color={colors.white} fontWeight="700">
-              Back to Lobby
-            </Typo>
-          </Button>
-        </View>
+        <Typo size={75} color={colors.white} fontWeight="900">
+          {finalScore || 0}
+        </Typo>
+
+        <Button onPress={continueToReview} style={styles.continueButton}>
+          <Typo size={18} color={colors.white} fontWeight="900">
+            Continue
+          </Typo>
+        </Button>
       </View>
     </ScreenWrapper>
   );
 };
 
+export default ScoreScreen;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.primary,
-    justifyContent: "center",
+    paddingHorizontal: 25,
+    paddingVertical: 25,
     alignItems: "center",
+    justifyContent: "space-between",
   },
-  scoreCard: {
-    alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.05)",
-    padding: 30,
-    borderRadius: 20,
-    marginVertical: 30,
-    width: "80%",
+
+  celebrationImage: {
+    width: "85%",
+    height: 300,
   },
-  buttonContainer: {
+
+  continueButton: {
     width: "100%",
-    gap: 15,
+    paddingVertical: 14,
+    borderWidth: 4,
+    borderColor: colors.white,
+    borderRadius: 30,
     alignItems: "center",
-  },
-  button: {
-    width: "80%",
-    paddingVertical: 15,
-    borderRadius: 12,
-    alignItems: "center",
+    backgroundColor: "#FFBE0B",
   },
 });
-
-export default ScoreScreen;

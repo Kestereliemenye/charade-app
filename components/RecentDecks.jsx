@@ -1,30 +1,68 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import { useCallback, useState } from "react";
+import { ScrollView, StyleSheet, View } from "react-native";
+import { useFocusEffect } from "expo-router";
+
 import Typo from "./Typo";
-import { colors, spacingX } from "../constants/theme";
 import DeckCards from "./DeckCards";
-import { verticalScale } from "../utils/styling";
+
 import { DECK_DATA } from "../constants/deckData";
+import { colors, spacingX } from "../constants/theme";
+import { verticalScale } from "../utils/styling";
+import { getRecentDeckIds } from "../utils/recentDecks";
 
 const RecentDecks = ({ style }) => {
+  const [recentDecks, setRecentDecks] = useState([]);
+
+  useFocusEffect(
+    useCallback(() => {
+      let isActive = true;
+
+      const loadRecentDecks = async () => {
+        const recentIds = await getRecentDeckIds();
+
+        // Preserve the order in which the deck IDs were saved.
+        const decks = recentIds
+          .map((id) => DECK_DATA.find((deck) => deck.id === id))
+          .filter(Boolean);
+
+        if (isActive) {
+          setRecentDecks(decks);
+        }
+      };
+
+      loadRecentDecks();
+
+      return () => {
+        isActive = false;
+      };
+    }, []),
+  );
+
+  if (recentDecks.length === 0) {
+    return (
+      <View style={[styles.emptyContainer, style]}>
+        <Typo size={14} color={colors.white} style={styles.emptyText}>
+          Your recently played decks will appear here.
+        </Typo>
+      </View>
+    );
+  }
 
   return (
     <View style={style}>
-      <Typo
-        size={25}
-        color={colors.subText}
-        fontWeight={600}
-        style={styles.textFmt}
-      >
-        YOUR RECENT DECKS
-      </Typo>
       <ScrollView
-        horizontal={true}
+        horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: spacingX._10 }}
+        contentContainerStyle={styles.listContent}
       >
-        {DECK_DATA.map((item) => (
-          <DeckCards key={item.id} title={item.title} icon={item.icon} style={{marginRight:verticalScale(20)}} />
+        {recentDecks.map((item) => (
+          <DeckCards
+            key={item.id}
+            id={item.id}
+            title={item.title}
+            image={item.image}
+            style={styles.deckCard}
+          />
         ))}
       </ScrollView>
     </View>
@@ -32,11 +70,23 @@ const RecentDecks = ({ style }) => {
 };
 
 export default RecentDecks;
-
 const styles = StyleSheet.create({
-  textFmt: {
-    // textAlign: "center",
-    fontFamily: "Poppins_900Black",
-    marginBottom: verticalScale(10),
+  listContent: {
+    paddingHorizontal: spacingX._10,
+  },
+
+  deckCard: {
+    marginRight: verticalScale(15),
+    width:verticalScale(140),
+  },
+
+  emptyContainer: {
+    paddingVertical: 25,
+    alignItems: "center",
+  },
+
+  emptyText: {
+    textAlign: "center",
+    opacity: 0.7,
   },
 });
