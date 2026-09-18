@@ -10,14 +10,16 @@ import ScreenWrapper from "../components/ScreenWrapper";
 const ScoreScreen = () => {
   const { finalScore, deckTitle } = useLocalSearchParams();
 
-  // Unlock orientation back to portrait when entering the score screen
-  useEffect(() => {
-    async function resetOrientation() {
-      await ScreenOrientation.unlockAsync();
-    }
-    resetOrientation();
-  }, []);
+  // lock screen to potrait
+useEffect(() => {
+  const lockToPortrait = async () => {
+    await ScreenOrientation.lockAsync(
+      ScreenOrientation.OrientationLock.PORTRAIT_UP,
+    );
+  };
 
+  lockToPortrait();
+}, []);
   return (
     <ScreenWrapper
       style={{ flex: 1, backgroundColor: colors.primary }}

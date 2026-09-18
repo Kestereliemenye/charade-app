@@ -36,9 +36,6 @@ const GamePlay = () => {
     }
     lockOrientation();
 
-    return () => {
-      ScreenOrientation.unlockAsync();
-    };
   }, []);
 
   useEffect(() => {

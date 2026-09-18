@@ -1,19 +1,19 @@
-import { Audio } from "expo-av";
+import { createAudioPlayer } from "expo-audio";
 
-// We now accept 'volume' as an argument
-export const playClickSound = async (volume) => {
-  const { sound } = await Audio.Sound.createAsync(
-    require("../assets/audio/menuSound.mp3"),
-  );
+const menuSound = require("../assets/audio/menuSound.mp3");
 
-  // Set the specific effect volume
-  await sound.setVolumeAsync(volume);
-  await sound.playAsync();
+export const playClickSound = (volume = 1) => {
+  const player = createAudioPlayer(menuSound);
 
-  // Unload after playing to free memory
-  sound.setOnPlaybackStatusUpdate((status) => {
+  // Ensure volume stays between 0 and 1
+  player.volume = Math.max(0, Math.min(volume, 1));
+
+  const subscription = player.addListener("playbackStatusUpdate", (status) => {
     if (status.didJustFinish) {
-      sound.unloadAsync();
+      subscription.remove();
+      player.release();
     }
   });
+
+  player.play();
 };

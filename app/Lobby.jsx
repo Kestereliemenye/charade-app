@@ -48,14 +48,16 @@ const Lobby = () => {
 
   return (
     <ScreenWrapper
-      style={{ flex: 1 }}
+      style={{ flex: 1, paddingVertical: spacingY._30 }}
       bgImage={currentDeck?.bgImage}
       showPattern={true}
     >
-      <BackBtn onPress={() => router.replace("/(tabs)/home")} />
-      <Typo size={35} style={styles.header} fontWeight={"700"}>
-        {deckTitle}
-      </Typo>
+      <View style={styles.topBtn}>
+        <BackBtn onPress={() => router.replace("/(tabs)/home")} />
+        <Typo size={35} style={styles.header} fontWeight={"700"}>
+          {deckTitle}
+        </Typo>
+      </View>
       <View style={styles.container}>
         <View style={styles.body}>
           <Image
@@ -110,6 +112,9 @@ const Lobby = () => {
 export default Lobby;
 
 const styles = StyleSheet.create({
+  topBtn: {
+    // marginVertical: spacingY._30
+  },
   container: {
     flex: 1,
     justifyContent: "space-around",
@@ -124,7 +129,7 @@ const styles = StyleSheet.create({
   header: {
     color: colors.white,
     textAlign: "center",
-    marginTop: verticalScale(20),
+    // marginTop: verticalScale(20),
     fontFamily: "Poppins_900Black",
     textShadowColor: "rgba(0, 0, 0, 0.75)",
     textShadowOffset: { width: 5, height: 5 },

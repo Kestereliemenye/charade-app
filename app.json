@@ -7,7 +7,6 @@
     "icon": "./assets/images/icon.png",
     "scheme": "mynaijacharadesii",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true
     },
@@ -18,9 +17,10 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
         "android.permission.RECORD_AUDIO",
         "android.permission.MODIFY_AUDIO_SETTINGS"
       ],
@@ -47,7 +47,10 @@
       "expo-font",
       "expo-asset",
       "expo-audio",
-      "expo-video"
+      "expo-video",
+      "expo-image",
+      "expo-web-browser",
+      "expo-status-bar"
     ],
     "experiments": {
       "typedRoutes": true,
@@ -58,6 +61,12 @@
       "eas": {
         "projectId": "85ee4a6f-06cf-428e-bc4b-60b11ccbf33f"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/85ee4a6f-06cf-428e-bc4b-60b11ccbf33f"
     }
   }
 }

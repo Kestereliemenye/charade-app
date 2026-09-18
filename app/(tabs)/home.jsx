@@ -1,13 +1,24 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import ScreenWrapper from "../../components/ScreenWrapper";
+import * as ScreenOrientation from "expo-screen-orientation";
 import AnimatedButton from "../../components/AnimatedButton";
 import Herosection from "../../components/Herosection";
 import { spacingX, spacingY } from "../../constants/theme";
 import RecentDecks from "../../components/RecentDecks";
 import BgAudio from "../../components/BgAudio";
 
-const home = () => {
+const Home = () => {
+    // lock screen to potrait
+  useEffect(() => {
+    const lockToPortrait = async () => {
+      await ScreenOrientation.lockAsync(
+        ScreenOrientation.OrientationLock.PORTRAIT_UP,
+      );
+    };
+  
+    lockToPortrait();
+  }, []);
   return (
     <ScreenWrapper showPattern={true} bgOpacity={0.4}>
       <BgAudio />
@@ -23,11 +34,12 @@ const home = () => {
   );
 };
 
-export default home;
+export default Home;
 
 const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: spacingX._20,
+    paddingVertical: spacingY._50,
     // flex:1
   },
 });

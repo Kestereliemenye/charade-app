@@ -12,15 +12,15 @@ const decks = () => {
       showPattern={true}
       bgOpacity={0.3}
       style={{
-        // paddingHorizontal: spacingX._20,
+        paddingHorizontal: spacingX._20,
+        paddingVertical: spacingY._70,
         // marginBottom: verticalScale(15),
       }}
     >
       <Typo size={35} style={styles.header} fontWeight={"700"}>
         DECKS
       </Typo>
-      <MainDeck/>
-      
+      <MainDeck />
     </ScreenWrapper>
   );
 };

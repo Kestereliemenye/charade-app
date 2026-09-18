@@ -30,11 +30,10 @@ const styles = StyleSheet.create({
   container: {
     borderRadius: radius._30,
     overflow: "hidden", // Ensures content doesn't bleed out of rounded corners
-    flex:1,
+    flex: 1,
   },
   listContent: {
-  
-      alignItems: "center",
+    alignItems: "center",
   },
   cardWrapper: {
     margin: spacingX._20, // Adjust spacing between cards
