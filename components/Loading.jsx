@@ -1,5 +1,5 @@
 import { colors } from "../constants/theme";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import React from "react";
 
 const Loading = ({ size = "large", color = colors.primaryDark }) => {
@@ -11,5 +11,3 @@ const Loading = ({ size = "large", color = colors.primaryDark }) => {
 };
 
 export default Loading;
-
-const styles = StyleSheet.create({});

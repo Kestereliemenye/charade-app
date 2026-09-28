@@ -1,5 +1,4 @@
 import {
-  Dimensions,
   ImageBackground,
   Platform,
   StatusBar,
@@ -8,7 +7,6 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { colors } from "@/constants/theme";
-
 
 const ScreenWrapper = ({
   style,
@@ -21,8 +19,7 @@ const ScreenWrapper = ({
   bgOpacity = 1,
   bgImage = require("../assets/images/screenWrapper-img.png"),
 }) => {
-
-    const { height } = useWindowDimensions();
+  const { height } = useWindowDimensions();
 
   let paddingTop = Platform.OS === "ios" ? height * 0.06 : 40;
   let paddingBottom = 0;

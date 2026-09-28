@@ -1,11 +1,11 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import React from "react";
 import { useRouter } from "expo-router";
 import { CaretLeft } from "phosphor-react-native";
 import { verticalScale } from "@/utils/styling";
 import { colors, radius } from "@/constants/theme";
 
-export default function BackBtn({ style, iconSize = 26 ,onPress}) {
+export default function BackBtn({ style, iconSize = 26, onPress }) {
   const router = useRouter();
   return (
     <TouchableOpacity

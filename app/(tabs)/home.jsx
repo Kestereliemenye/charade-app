@@ -1,10 +1,9 @@
 import { useCallback } from "react";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { router, useFocusEffect } from "expo-router";
 import * as ScreenOrientation from "expo-screen-orientation";
 
 import ScreenWrapper from "../../components/ScreenWrapper";
-import AnimatedButton from "../../components/AnimatedButton";
 import Herosection from "../../components/Herosection";
 import RecentDecks from "../../components/RecentDecks";
 import BgAudio from "../../components/BgAudio";
@@ -117,7 +116,7 @@ export default Home;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingVertical:spacingY._20,
+    paddingVertical: spacingY._20,
     paddingHorizontal: spacingX._20,
   },
   heroSection: {

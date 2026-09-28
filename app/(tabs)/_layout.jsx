@@ -1,5 +1,3 @@
-import { StyleSheet } from "react-native";
-import React from "react";
 import { Tabs } from "expo-router";
 import CustomTabs from "@/components/CustomTabs";
 
@@ -13,7 +11,7 @@ export default function Layout() {
     >
       <Tabs.Screen name="home" />
       <Tabs.Screen name="decks" />
-      <Tabs.Screen name="settings"  />
+      <Tabs.Screen name="settings" />
     </Tabs>
   );
 }

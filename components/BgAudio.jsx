@@ -1,25 +1,30 @@
-import { useContext, useEffect } from "react";
+/* eslint-disable react-hooks/immutability */
+
+import { useContext, useEffect, useRef } from "react";
 import { useAudioPlayer } from "expo-audio";
+
 import { AudioContext } from "../contexts/AudioContext";
 
 const backgroundMusic = require("../assets/audio/bgMusic.mp3");
 
 const BgAudio = () => {
   const { activeMusicVolume } = useContext(AudioContext);
-
   const player = useAudioPlayer(backgroundMusic);
+  const hasStartedRef = useRef(false);
 
-  // Start and loop the music
   useEffect(() => {
     player.loop = true;
-    player.play();
 
-
+    if (!hasStartedRef.current) {
+      player.play();
+      hasStartedRef.current = true;
+    }
   }, [player]);
 
-  // Update the volume whenever the context value changes
   useEffect(() => {
-    player.volume = activeMusicVolume;
+    const volume = Number(activeMusicVolume) || 0;
+
+    player.volume = Math.max(0, Math.min(1, volume));
   }, [activeMusicVolume, player]);
 
   return null;

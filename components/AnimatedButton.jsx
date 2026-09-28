@@ -1,22 +1,25 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import Typo from './Typo'
-import AnimatedBorderButton from './AnimatedBorderButton';
-import { colors, radius, spacingX } from '../constants/theme';
-import { router } from 'expo-router';
-import { verticalScale } from '../utils/styling';
+import { StyleSheet, View } from "react-native";
+import React from "react";
+import Typo from "./Typo";
+import AnimatedBorderButton from "./AnimatedBorderButton";
+import { colors, radius, spacingX } from "../constants/theme";
+import { router } from "expo-router";
+import { verticalScale } from "../utils/styling";
 import * as Icons from "phosphor-react-native";
 
-const AnimatedButton = ({style}) => {
+const AnimatedButton = ({ style }) => {
   return (
     <AnimatedBorderButton
       onPress={() => router.push("/(tabs)/home")}
-      style={[{
-        shadowColor: "#000",
-        shadowOffset: { width: 4, height: 5 },
-        shadowOpacity: 0.3,
-        shadowRadius: 10,
-      }, style]}
+      style={[
+        {
+          shadowColor: "#000",
+          shadowOffset: { width: 4, height: 5 },
+          shadowOpacity: 0.3,
+          shadowRadius: 10,
+        },
+        style,
+      ]}
     >
       <View style={styles.buttonText}>
         <Icons.PlayIcon
@@ -45,18 +48,18 @@ const AnimatedButton = ({style}) => {
       </View>
     </AnimatedBorderButton>
   );
-}
+};
 
-export default AnimatedButton
+export default AnimatedButton;
 
 const styles = StyleSheet.create({
-    buttonText: {
-        flex:1,
-        flexDirection: "row",
-        justifyContent: "flex-start",
-        gap: verticalScale(40),
-        alignItems: "center",
-        paddingHorizontal: spacingX._10,
-        borderRadius: radius._20
-    }
-})
+  buttonText: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    gap: verticalScale(40),
+    alignItems: "center",
+    paddingHorizontal: spacingX._10,
+    borderRadius: radius._20,
+  },
+});

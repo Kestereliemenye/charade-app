@@ -3,7 +3,7 @@ import { Image } from "expo-image";
 import { router } from "expo-router";
 
 import Typo from "./Typo";
-import { colors, radius, spacingX, spacingY } from "../constants/theme";
+import { colors, radius, spacingX } from "../constants/theme";
 import { DECK_DATA } from "../constants/deckData";
 import { verticalScale } from "../utils/styling";
 

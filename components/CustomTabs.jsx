@@ -1,46 +1,42 @@
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { useContext } from "react";
+import { Platform, StyleSheet, TouchableOpacity, View } from "react-native";
 import Animated, {
   FadeInRight,
   FadeOutLeft,
   LinearTransition,
   ZoomIn,
 } from "react-native-reanimated";
-import { useContext } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import * as Haptics from "expo-haptics";
 import * as Icons from "phosphor-react-native";
 
 import { colors } from "@/constants/theme";
 import { AudioContext } from "../contexts/AudioContext";
 import { playClickSound } from "../utils/soundEffect";
 
+const AnimatedTouchableOpacity =
+  Animated.createAnimatedComponent(TouchableOpacity);
+
+const tabbarItems = {
+  home: {
+    label: "Home",
+    icon: Icons.House,
+  },
+
+  decks: {
+    label: "Decks",
+    icon: Icons.Cards,
+  },
+
+  settings: {
+    label: "Settings",
+    icon: Icons.Gear,
+  },
+};
+
 export default function CustomTabs({ state, descriptors, navigation }) {
-  const AnimatedTouchableOpacity =
-    Animated.createAnimatedComponent(TouchableOpacity);
   const insets = useSafeAreaInsets();
   const { effectVolume } = useContext(AudioContext);
-
-  const tabbarItems = {
-    home: {
-      label: "Home",
-      icon: Icons.House,
-    },
-
-    decks: {
-      label: "Decks",
-      icon: Icons.Cards,
-    },
-
-    settings: {
-      label: "Settings",
-      icon: Icons.Gear,
-    },
-  };
 
   return (
     <View
@@ -54,7 +50,6 @@ export default function CustomTabs({ state, descriptors, navigation }) {
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const isFocused = state.index === index;
-
         const tabItem = tabbarItems[route.name];
 
         if (!tabItem) {
@@ -64,7 +59,17 @@ export default function CustomTabs({ state, descriptors, navigation }) {
         const IconComponent = tabItem.icon;
 
         const onPress = () => {
-          playClickSound(effectVolume);
+          if (Platform.OS === "ios") {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(
+              () => {},
+            );
+          }
+
+      try {
+        playClickSound(effectVolume);
+      } catch (error) {
+        console.warn("Could not play tab sound:", error);
+      }
 
           const event = navigation.emit({
             type: "tabPress",
@@ -146,7 +151,6 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.35,
     shadowRadius: 10,
-
     elevation: 15,
   },
 
@@ -163,7 +167,7 @@ const styles = StyleSheet.create({
   activeTabItem: {
     minWidth: 110,
     gap: 8,
-    backgroundColor: "#FFBE0B",
+    backgroundColor: colors.gold || "#FFBE0B",
   },
 
   activeLabel: {

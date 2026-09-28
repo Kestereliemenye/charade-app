@@ -1,8 +1,6 @@
-import React, { useContext } from "react";
-import { View, StyleSheet, ScrollView, Platform } from "react-native";
-import Slider from "@react-native-community/slider";
+import React from "react";
+import { StyleSheet, ScrollView, Platform } from "react-native";
 import Typo from "../../components/Typo"; // Assuming you have your custom Typo
-// import { AudioContext } from "../../contexts/AudioContext";
 import { colors, spacingX, spacingY } from "../../constants/theme";
 import ScreenWrapper from "../../components/ScreenWrapper";
 import AudioSettings from "../../components/AudioSettings";
@@ -14,7 +12,7 @@ import MuteBtn from "../../components/MuteBtn";
 
 const Settings = () => {
   return (
-    <ScreenWrapper showPattern={true}bgOpacity={0.4}>
+    <ScreenWrapper showPattern={true} bgOpacity={0.4}>
       <Typo size={35} style={styles.header} fontWeight={"700"}>
         SETTINGS
       </Typo>
@@ -26,7 +24,7 @@ const Settings = () => {
         <GameMode />
         <Language />
         <Credits />
-        <MuteBtn/>
+        <MuteBtn />
       </ScrollView>
     </ScreenWrapper>
   );
@@ -49,4 +47,3 @@ const styles = StyleSheet.create({
     textShadowRadius: 0.5,
   },
 });
-
